@@ -1,0 +1,12 @@
+wolnosciowiec.wiki.index:
+    path: /
+    defaults:
+        _controller: "WikiBundle:Default:index"
+        _format: json
+
+wolnosciowiec.wiki.browse:
+    path: /browse/{groupName}/{url}
+    defaults:
+        _controller: "WikiBundle:Browser:index"
+    requirements:
+        url: '(.*)\.([md|txt|html|j2]+)'

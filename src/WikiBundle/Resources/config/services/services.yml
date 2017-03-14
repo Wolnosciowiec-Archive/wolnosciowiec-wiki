@@ -1,0 +1,6 @@
+services:
+    wolnosciowiec.wiki.browser:
+        class: WikiBundle\Service\Browser\PagesBrowser
+        arguments:
+            groupsDirectory: '%kernel.root_dir%/../var/compiled'
+

@@ -1,0 +1,2 @@
+app:
+    resource: "@WikiBundle/Resources/config/routing/routing.yml"
