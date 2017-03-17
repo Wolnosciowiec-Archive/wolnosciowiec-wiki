@@ -1,0 +1,6 @@
+services:
+    wolnosciowiec.wiki.processor:
+        class: WikiBundle\Service\Processor\ToStaticFileProcessor
+        arguments:
+            compilerFactory: "@wolnosciowiec.contentcompiler.factory"
+            storageManager: "@wolnosciowiec.wiki.manager.storage"

@@ -2,13 +2,13 @@
 
 namespace WikiBundle\Service\Browser;
 
-use WikiBundle\Domain\Browser\PagesBrowserInterface;
+use WikiBundle\Domain\Service\Browser\PagesBrowserInterface;
 use WikiBundle\Exception\Browser\PageNotFoundException;
 
 /**
  * @inheritdoc
  */
-class PagesBrowser implements PagesBrowserInterface
+class StaticPagesBrowser implements PagesBrowserInterface
 {
     /** @var string $directory */
     private $directory;
@@ -41,9 +41,9 @@ class PagesBrowser implements PagesBrowserInterface
     private function getPagePath(string $group, string $url)
     {
         $path = $this->directory . '/' .
-            $group . '/' .
+            $group . '/' . '/src/' .
             '/' . pathinfo($url, PATHINFO_DIRNAME) .
-            '/' . pathinfo($url, PATHINFO_FILENAME) . '.html';
+            '/' . pathinfo($url, PATHINFO_BASENAME);
 
         $path = realpath($path);
 

@@ -1,0 +1,8 @@
+services:
+    wolnosciowiec.wiki.fetchers.git:
+        class: WikiBundle\Service\Fetcher\GitFetcher
+        arguments:
+            storageManager: "@wolnosciowiec.wiki.manager.storage"
+        tags:
+            - { name: wolnosciowiec.wiki.fetchers }
+

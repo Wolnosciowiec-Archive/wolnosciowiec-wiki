@@ -1,3 +1,16 @@
+
+#---------------------------------------------------------------------
+# Application routing
+#
+# Here are the routes set up
+# including a very simplistic token authorization
+#
+# There are two tokens: api_key and push_api_key.
+# Both of them are taken from the configuration eg. parameters.yml
+# and used AS A PART of the route, entering invalid token in the url
+# will cause a "HTTP 1.0 404 Not Found"
+#---------------------------------------------------------------------
+
 wolnosciowiec.wiki.index:
     path: /
     defaults:
@@ -5,8 +18,17 @@ wolnosciowiec.wiki.index:
         _format: json
 
 wolnosciowiec.wiki.browse:
-    path: /browse/{groupName}/{url}
+    path: /api.internal/{token}/browse/{groupName}/{url}
     defaults:
         _controller: "WikiBundle:Browser:index"
     requirements:
-        url: '(.*)\.([md|txt|html|j2]+)'
+        url: '.+'
+        token: '%api_key%'
+
+wolnosciowiec.wiki.push:
+    path: /api.external/{token}/{fetcherName}/push
+    defaults:
+        _controller: "WikiBundle:Push:index"
+    requirements:
+        token: '%push_api_key%'
+        fetcherName: '([A-Za-z0-9\-\_]+)'

@@ -1,0 +1,6 @@
+services:
+    wolnosciowiec.wiki.factory.payload.github:
+        class: WikiBundle\Factory\Payload\GithubPayloadFactory
+        tags:
+            - { name: wolnosciowiec.wiki.factory.payload }
+

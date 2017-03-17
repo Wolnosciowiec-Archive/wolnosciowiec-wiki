@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace WikiBundle\Controller;
 
@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use WikiBundle\Domain\Browser\PagesBrowserInterface;
+use WikiBundle\Domain\Service\Browser\PagesBrowserInterface;
 use WikiBundle\Exception\Browser\PageNotFoundException;
 
 /**

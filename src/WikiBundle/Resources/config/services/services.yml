@@ -1,6 +1,25 @@
+imports:
+    - { resource: fetchers.yml }
+    - { resource: payload_factories.yml }
+    - { resource: processors.yml }
+
 services:
     wolnosciowiec.wiki.browser:
-        class: WikiBundle\Service\Browser\PagesBrowser
+        class: WikiBundle\Service\Browser\StaticPagesBrowser
         arguments:
-            groupsDirectory: '%kernel.root_dir%/../var/compiled'
+            groupsDirectory: '%kernel.root_dir%/Compiled'
+
+    wolnosciowiec.wiki.fetcher:
+        class: WikiBundle\Service\Fetcher\FetcherService
+        arguments:
+            storageManager: "@wolnosciowiec.wiki.manager.storage"
+
+    wolnosciowiec.wiki.factory.payload:
+        class: WikiBundle\Factory\Payload\PayloadFactory
+
+    wolnosciowiec.wiki.manager.storage:
+        class: WikiBundle\Service\StorageManager\StorageManager
+        arguments:
+            storagePath: '%kernel.root_dir%/Storage'
+            compiledFilesPath: '%kernel.root_dir%/Compiled'
 

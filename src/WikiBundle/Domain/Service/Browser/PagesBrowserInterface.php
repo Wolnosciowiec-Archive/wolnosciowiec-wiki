@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace WikiBundle\Domain\Browser;
+namespace WikiBundle\Domain\Service\Browser;
 
 /**
  * Allows browsing the HTML pages
