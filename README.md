@@ -8,6 +8,30 @@ to the template and allowing to list items with pagination stored in YAML files 
 
 ![screenshot](docs/wolnosciowiec-wiki.png)
 
+```php
+/*
+ * Wolnościowiec / ContentCompilerBundle
+ * -------------------------------------
+ *
+ *   Converts git repository into a website.
+ *   A part of an anarchist portal - wolnosciowiec.net
+ *
+ *   Wolnościowiec is a project to integrate the movement
+ *   of people who strive to build a society based on
+ *   solidarity, freedom, equality with a respect for
+ *   individual and cooperation of each other.
+ *
+ *   We support human rights, animal rights, feminism,
+ *   anti-capitalism (taking over the production by workers),
+ *   anti-racism, and internationalism. We negate
+ *   the political fight and politicians at all.
+ *
+ *   http://wolnosciowiec.net/
+ *
+ *   License: LGPLv3
+ */
+ ```
+
 ### How it works?
 
 1. A git push on github is made, then the github notifies the service
