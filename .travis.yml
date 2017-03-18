@@ -1,0 +1,20 @@
+language: php
+sudo: false
+php:
+    - 7.0
+    - 7.1
+    - nightly
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+before_install:
+    - composer self-update
+    - phpenv config-rm xdebug.ini || true
+    - composer dump-autoload -o
+
+install: composer update --prefer-dist
+
+script:
+    - ./vendor/bin/phpunit
