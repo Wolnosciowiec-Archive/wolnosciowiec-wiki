@@ -4,6 +4,13 @@ php:
     - 7.0
     - 7.1
     - nightly
+    - hhvm
+
+matrix:
+    allow_failures:
+        - php:
+            - nightly
+            - hhvm
 
 cache:
     directories:
