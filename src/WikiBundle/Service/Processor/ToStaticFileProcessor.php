@@ -3,6 +3,7 @@
 namespace WikiBundle\Service\Processor;
 
 use ContentCompilerBundle\Factory\CompilerFactory;
+use ContentCompilerBundle\Service\ContentCompiler\ContentCompilerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
@@ -73,7 +74,9 @@ class ToStaticFileProcessor
 
         file_put_contents(
             $targetPath,
-            $compiler->compileFromString(file_get_contents($file->getRealPath()))
+            $compiler->compileFromString(file_get_contents($file->getRealPath()), false, [
+                ContentCompilerInterface::ESCAPE_LINKS => false,
+            ])
         );
 
         return $targetPath;

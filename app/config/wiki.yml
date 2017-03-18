@@ -1,0 +1,7 @@
+wiki:
+    repositories:
+        anarchifaq:
+            address: "https://github.com/Wolnosciowiec/anarchi-faq-pl"
+            branch:  "master"
+            fetcher: "git"
+

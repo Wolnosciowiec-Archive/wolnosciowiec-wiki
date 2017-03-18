@@ -2,9 +2,11 @@
 
 namespace WikiBundle\Service\Fetcher;
 
+use GitWrapper\GitException;
 use GitWrapper\GitWrapper;
 use WikiBundle\Domain\Service\Fetcher\FetcherInterface;
 use WikiBundle\Domain\Service\StorageManager\StorageManagerInterface;
+use WikiBundle\Exception\Fetcher\RepositoryNotFoundException;
 
 /**
  * Fetches repositories from git
@@ -30,9 +32,15 @@ class GitFetcher implements FetcherInterface
     {
         $path = $this->storageManager->findPathFor($groupName, true);
 
-        $this->git->cloneRepository($url, $path, [
-            'b' => $branch,
-        ]);
+        try {
+            $this->git->cloneRepository($url, $path, [
+                'b' => $branch,
+            ]);
+
+        } catch (GitException $e) {
+            throw new RepositoryNotFoundException('Repository "' . $url . '" does not exists');
+        }
+
 
         return $path;
     }

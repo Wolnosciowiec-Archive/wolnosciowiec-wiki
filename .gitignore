@@ -14,3 +14,8 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
+config/wiki.yml
+src/
+!src/WikiBundle
+!src/.htaccess
+!src/README.md
