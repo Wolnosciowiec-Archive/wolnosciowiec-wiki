@@ -4,6 +4,7 @@ namespace WikiBundle\Service\Fetcher;
 
 use WikiBundle\Domain\Service\Fetcher\FetcherInterface;
 use WikiBundle\Domain\Service\StorageManager\StorageManagerInterface;
+use WikiBundle\Exception\Fetcher\RepositoryNotFoundException;
 
 /**
  * Fetches a repository allowed in config
@@ -47,6 +48,9 @@ class FetcherService
      * @param string $url
      * @param string $branch
      *
+     * @throws \InvalidArgumentException
+     * @throws RepositoryNotFoundException
+     *
      * @return string
      */
     public function cloneRepository(string $fetcherName, string $url, string $branch): string
@@ -58,7 +62,7 @@ class FetcherService
         $repositoryName = $this->storageManager->getRepositoryName($url, $branch);
 
         if (!$repositoryName) {
-            throw new \InvalidArgumentException('Specified url and branch are not allowed, forbidden by the configuration');
+            throw new RepositoryNotFoundException('Specified url and branch are not allowed, forbidden by the configuration');
         }
 
         /** @var FetcherInterface $fetcher */
