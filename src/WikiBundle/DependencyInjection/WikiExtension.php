@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Reference;
+use WikiBundle\Exception\InvalidConfigurationException;
+use WikiBundle\Service\HostHandler\HostHandler;
 
 class WikiExtension extends Extension
 {
@@ -25,6 +27,7 @@ class WikiExtension extends Extension
         $this->prepareFetcher($container, $config);
         $this->preparePayloadFactory($container);
         $this->prepareStorageManager($container, $config);
+        $this->prepareHostHandler($container, $config);
     }
 
     private function prepareFetcher(ContainerBuilder $container, array $config)
@@ -57,5 +60,27 @@ class WikiExtension extends Extension
         foreach ($implementations as $id => $tags) {
             $factory->addMethodCall('addFactory', [new Reference($id)]);
         }
+    }
+
+    private function prepareHostHandler(ContainerBuilder $container, array $config)
+    {
+        $handler = $container->findDefinition('wolnosciowiec.wiki.handler.host');
+        $repositoriesIndexedByHost = [];
+
+        foreach ($config['repositories'] as $name => $repository) {
+            foreach ($repository['domains'] ?? [] as $domain) {
+
+                $domain = HostHandler::normalizeDomainName($domain);
+
+                if (isset($repositoriesIndexedByHost[$domain])) {
+                    throw new InvalidConfigurationException('Conflict: Domain "' . $domain . '" assigned to multiple repositories');
+                }
+
+                $repository['name'] = $name;
+                $repositoriesIndexedByHost[$domain] = $repository;
+            }
+        }
+
+        $handler->addMethodCall('setRepositories', [$repositoriesIndexedByHost]);
     }
 }

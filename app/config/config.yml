@@ -70,6 +70,9 @@ swiftmailer:
     password: '%mailer_password%'
     spool: { type: memory }
 
-
-
-
+jms_serializer:
+    metadata:
+        directories:
+            WikiBundle:
+                namespace_prefix: "WikiBundle"
+                path: "%kernel.root_dir%/../src/WikiBundle/Resources/config/serializer"

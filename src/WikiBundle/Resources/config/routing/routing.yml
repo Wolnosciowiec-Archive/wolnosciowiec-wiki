@@ -14,8 +14,15 @@
 wolnosciowiec.wiki.index:
     path: /
     defaults:
-        _controller: "WikiBundle:Default:index"
-        _format: json
+        _controller: "WikiBundle:Default:routeByDomain"
+        url: ""
+
+wolnosciowiec.wiki.by_domain:
+    path: /{url}
+    defaults:
+        _controller: "WikiBundle:Default:routeByDomain"
+    requirements:
+        url: '.+'
 
 wolnosciowiec.wiki.browse:
     path: /api.internal/{token}/browse/{groupName}/{url}

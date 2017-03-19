@@ -23,3 +23,7 @@ services:
             storagePath: '%kernel.root_dir%/Storage'
             compiledFilesPath: '%kernel.root_dir%/Compiled'
 
+    wolnosciowiec.wiki.handler.host:
+        class: WikiBundle\Service\HostHandler\HostHandler
+        arguments:
+            serializer: "@serializer"

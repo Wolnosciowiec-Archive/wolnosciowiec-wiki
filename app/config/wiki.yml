@@ -4,4 +4,6 @@ wiki:
             address: "https://github.com/Wolnosciowiec/anarchi-faq-pl"
             branch:  "master"
             fetcher: "git"
-
+            domains: ["faq.wolnosciowiec.net", "faq.dev"]
+            index_path: "/index.md"
+            public: true
