@@ -12,6 +12,15 @@ class DefaultControllerTest extends WebTestCase
         $client->request('GET', '/');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('{"success":true,"message":"Hello"}', $client->getResponse()->getContent());
+        $this->assertContains('message":"Hello"', $client->getResponse()->getContent());
+    }
+
+    public function testAccessByDomain()
+    {
+        $client = static::createClient();
+        $client->request('GET', 'http://faq.dev/');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertContains('Anarchizm', $client->getResponse()->getContent());
     }
 }
