@@ -17,13 +17,19 @@ services:
     wolnosciowiec.wiki.factory.payload:
         class: WikiBundle\Factory\Payload\PayloadFactory
 
+    wolnosciowiec.wiki.manager.filesystem:
+        class: WikiBundle\Service\FileReader\FileSystemOperator
+
     wolnosciowiec.wiki.manager.storage:
         class: WikiBundle\Service\StorageManager\StorageManager
         arguments:
             storagePath: '%kernel.root_dir%/Storage'
             compiledFilesPath: '%kernel.root_dir%/Compiled'
+            filesystem: "@wolnosciowiec.wiki.manager.filesystem"
 
     wolnosciowiec.wiki.handler.host:
         class: WikiBundle\Service\HostHandler\HostHandler
         arguments:
             serializer: "@serializer"
+
+

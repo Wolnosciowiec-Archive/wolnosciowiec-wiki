@@ -3,6 +3,7 @@
 namespace WikiBundle\Service\StorageManager;
 
 use Symfony\Component\Filesystem\Filesystem;
+use WikiBundle\Domain\Service\StorageManager\FileSystemAccessInterface;
 use WikiBundle\Domain\Service\StorageManager\StorageManagerInterface;
 
 class StorageManager implements StorageManagerInterface
@@ -13,17 +14,20 @@ class StorageManager implements StorageManagerInterface
     /** @var string $compiledFilesPath */
     private $compiledFilesPath = '';
 
-    /** @var Filesystem $filesystem */
+    /** @var FileSystemAccessInterface $filesystem */
     private $filesystem;
 
     /** @var array $knownRepositories */
     private $knownRepositories = [];
 
-    public function __construct(string $storagePath, string $compiledFilesPath)
-    {
+    public function __construct(
+        string $storagePath,
+        string $compiledFilesPath,
+        FileSystemAccessInterface $filesystem
+    ) {
         $this->storagePath = $storagePath;
         $this->compiledFilesPath = $compiledFilesPath;
-        $this->filesystem = new Filesystem();
+        $this->filesystem = $filesystem;
     }
 
     private function escape(string $path): string
@@ -43,7 +47,7 @@ class StorageManager implements StorageManagerInterface
         $path = $this->storagePath . '/' . $this->escape($repositoryName);
 
         if ($freeUp) {
-            if (is_dir($path)) {
+            if ($this->filesystem->isDir($path)) {
                 $this->filesystem->remove($path);
             }
 
@@ -61,7 +65,7 @@ class StorageManager implements StorageManagerInterface
         $filePath = str_replace(realpath($this->storagePath), '', realpath($srcFilePath));
         $dir = $this->compiledFilesPath . '/' . dirname($filePath);
 
-        if (!is_dir($dir)) {
+        if (!$this->filesystem->isDir($dir)) {
             $this->filesystem->mkdir($dir, 0775);
         }
 

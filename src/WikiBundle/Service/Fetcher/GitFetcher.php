@@ -33,6 +33,7 @@ class GitFetcher implements FetcherInterface
         $path = $this->storageManager->findPathFor($groupName, true);
 
         try {
+            // @todo: Implement FileSystemAccessInterface
             $this->git->cloneRepository($url, $path, [
                 'b' => $branch,
             ]);
