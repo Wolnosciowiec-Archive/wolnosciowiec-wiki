@@ -18,7 +18,7 @@ services:
         class: WikiBundle\Factory\Payload\PayloadFactory
 
     wolnosciowiec.wiki.manager.filesystem:
-        class: WikiBundle\Service\FileReader\FileSystemOperator
+        class: WikiBundle\Service\StorageManager\FileSystemOperator
 
     wolnosciowiec.wiki.manager.storage:
         class: WikiBundle\Service\StorageManager\StorageManager

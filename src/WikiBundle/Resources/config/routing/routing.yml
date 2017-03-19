@@ -17,13 +17,6 @@ wolnosciowiec.wiki.index:
         _controller: "WikiBundle:Default:routeByDomain"
         url: ""
 
-wolnosciowiec.wiki.by_domain:
-    path: /{url}
-    defaults:
-        _controller: "WikiBundle:Default:routeByDomain"
-    requirements:
-        url: '.+'
-
 wolnosciowiec.wiki.browse:
     path: /api.internal/{token}/browse/{groupName}/{url}
     defaults:
@@ -39,3 +32,10 @@ wolnosciowiec.wiki.push:
     requirements:
         token: '%push_api_key%'
         fetcherName: '([A-Za-z0-9\-\_]+)'
+
+wolnosciowiec.wiki.by_domain:
+    path: /{url}
+    defaults:
+        _controller: "WikiBundle:Default:routeByDomain"
+    requirements:
+        url: '.+'

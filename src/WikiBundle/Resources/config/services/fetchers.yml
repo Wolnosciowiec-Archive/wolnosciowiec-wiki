@@ -6,3 +6,11 @@ services:
         tags:
             - { name: wolnosciowiec.wiki.fetchers }
 
+    wolnosciowiec.wiki.fetchers.filesystem:
+        class: WikiBundle\Service\Fetcher\FileSystemFetcher
+        arguments:
+            filesystem: "@wolnosciowiec.wiki.manager.filesystem"
+            storageManager: "@wolnosciowiec.wiki.manager.storage"
+        tags:
+            - { name: wolnosciowiec.wiki.fetchers }
+
