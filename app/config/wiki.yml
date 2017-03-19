@@ -7,3 +7,11 @@ wiki:
             domains: ["faq.wolnosciowiec.net", "faq.dev"]
             index_path: "/index.md"
             public: true
+
+        anarchifaq_local:
+            address: "%kernel.root_dir%/Storage/anarchifaq"
+            branch:  "master"
+            fetcher: "filesystem"
+            domains: ["faq_local.dev"]
+            index_path: "/index.md"
+            public: true

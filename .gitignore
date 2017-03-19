@@ -17,7 +17,7 @@
 /vendor/
 /web/bundles/
 config/wiki.yml
-src/
+src/*/
 !src/WikiBundle
 !src/.htaccess
 !src/README.md

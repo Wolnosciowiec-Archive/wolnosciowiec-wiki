@@ -1,0 +1,22 @@
+WikiBundle\Domain\Entity\RepositoryDefinition:
+    properties:
+        address:
+            type: string
+
+        branch:
+            type: string
+
+        fetcher:
+            type: string
+
+        domains:
+            type: array
+
+        public:
+            type: boolean
+
+        indexPath:
+            type: string
+
+        name:
+            type: string
