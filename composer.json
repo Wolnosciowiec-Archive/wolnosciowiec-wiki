@@ -43,6 +43,7 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
         ],
         "post-install-cmd": [
+            "php -r \"file_exists('app/config/wiki.yml') || copy('app/config/wiki-example.yml', 'app/config/wiki.yml');\"",
             "@symfony-scripts"
         ],
         "post-update-cmd": [
