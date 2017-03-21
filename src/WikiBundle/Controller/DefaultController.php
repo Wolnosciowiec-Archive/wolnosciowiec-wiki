@@ -20,7 +20,8 @@ class DefaultController extends Controller
 
     public function routeByDomainAction(Request $request, string $url)
     {
-        $repository = $this->get('wolnosciowiec.wiki.handler.host')->getRepositoryForDomain($request->getHost());
+        $repository = $this->get('wolnosciowiec.wiki.provider.repository')
+            ->getRepositoryForDomain($request->getHost());
 
         if ($repository->isValid()) {
 

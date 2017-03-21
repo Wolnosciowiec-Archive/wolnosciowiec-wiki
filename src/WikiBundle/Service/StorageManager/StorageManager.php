@@ -97,4 +97,9 @@ class StorageManager implements StorageManagerInterface
     {
         return $this->knownRepositories;
     }
+
+    public function getFilesystem(): FileSystemAccessInterface
+    {
+        return $this->filesystem;
+    }
 }

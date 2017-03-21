@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace WikiBundle\Service\HostHandler;
+namespace WikiBundle\Service\RepositoryProvider;
 
 use JMS\Serializer\SerializerInterface;
 use WikiBundle\Domain\Entity\RepositoryDefinition;
-use WikiBundle\Domain\Service\HostHandler\HostHandlerInterface;
+use WikiBundle\Domain\Service\RepositoryProvider\RepositoryProviderInterface;
 
-class HostHandler implements HostHandlerInterface
+class RepositoryProvider implements RepositoryProviderInterface
 {
     /**
      * @var array $repositoryByHost Repositories indexed by host names
@@ -57,5 +57,27 @@ class HostHandler implements HostHandlerInterface
         $domainName = $this->normalizeDomainName($domainName);
 
         return $this->repositoryByHost[$domainName] ?? new RepositoryDefinition();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAll(): array
+    {
+        return $this->repositoryByHost;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIndexedByAddress(): array
+    {
+        $results = [];
+
+        foreach ($this->getAll() as $repositoryDefinition) {
+            $results[$repositoryDefinition->getAddress() . '@' . $repositoryDefinition->getBranch()] = $repositoryDefinition;
+        }
+
+        return $results;
     }
 }

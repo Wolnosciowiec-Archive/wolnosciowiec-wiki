@@ -2,6 +2,7 @@
 
 namespace WikiBundle\Service\Fetcher;
 
+use Psr\Log\LoggerInterface;
 use WikiBundle\Domain\Service\Fetcher\FetcherInterface;
 use WikiBundle\Domain\Service\StorageManager\StorageManagerInterface;
 use WikiBundle\Exception\Fetcher\RepositoryNotFoundException;
@@ -17,9 +18,15 @@ class FetcherService
     /** @var StorageManagerInterface $storageManager */
     private $storageManager;
 
-    public function __construct(StorageManagerInterface $storageManager)
-    {
+    /** @var LoggerInterface $logger */
+    private $logger;
+
+    public function __construct(
+        StorageManagerInterface $storageManager,
+        LoggerInterface $logger
+    ) {
         $this->storageManager = $storageManager;
+        $this->logger         = $logger;
     }
 
     /**
@@ -56,17 +63,21 @@ class FetcherService
     public function cloneRepository(string $fetcherName, string $url, string $branch): string
     {
         if (!isset($this->fetchers[$fetcherName])) {
+            $this->logger->error('Unrecognized fetcher "' . $fetcherName . '" requested');
             throw new \InvalidArgumentException('Unrecognized fetcher "' . $fetcherName . '" requested');
         }
 
         $repositoryName = $this->storageManager->getRepositoryName($url, $branch);
 
         if (!$repositoryName) {
+            $this->logger->error('Repository "' . $repositoryName . '" forbidden by config');
             throw new RepositoryNotFoundException('Specified url and branch are not allowed, forbidden by the configuration');
         }
 
         /** @var FetcherInterface $fetcher */
         $fetcher = $this->fetchers[$fetcherName];
+
+        $this->logger->info('Using "' . $fetcherName . '" fetcher');
         return $fetcher->fetch($repositoryName, $url, $branch);
     }
 }

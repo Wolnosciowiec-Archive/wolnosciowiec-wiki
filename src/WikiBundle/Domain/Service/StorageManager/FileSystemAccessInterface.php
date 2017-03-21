@@ -31,6 +31,22 @@ interface FileSystemAccessInterface
     public function isDir(string $path): bool;
 
     /**
+     * Checks if the file exists
+     *
+     * @param string $path
+     * @return bool
+     */
+    public function isFile(string $path): bool;
+
+    /**
+     * Verifies if file is hidden
+     *
+     * @param string $path
+     * @return bool
+     */
+    public function isHidden(string $path): bool;
+
+    /**
      * Returns file contents
      *
      * @param string $path
@@ -69,4 +85,24 @@ interface FileSystemAccessInterface
      * @param string $destination
      */
     public function copy(string $src, string $destination);
+
+    /**
+     * Find files
+     *
+     * @param string $path
+     * @return string[]
+     */
+    public function findFiles(string $path): array;
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    public function guessMimeType(string $path): string;
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    public function guessExtension(string $path): string;
 }

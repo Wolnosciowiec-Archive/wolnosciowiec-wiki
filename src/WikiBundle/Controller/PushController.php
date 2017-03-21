@@ -5,30 +5,26 @@ namespace WikiBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use WikiBundle\Exception\PushFailedException;
 
 /**
  * Serve pages to the browser
  */
 class PushController extends Controller
 {
-    public function indexAction(Request $request, $fetcherName)
+    public function __construct()
     {
         ignore_user_abort(true);
+    }
 
-        $fetcher = $this->get('wolnosciowiec.wiki.fetcher');
+    public function indexAction(Request $request, $fetcherName)
+    {
         $payload = $this->get('wolnosciowiec.wiki.factory.payload')->create($request->getContent());
-        $storageManager = $this->get('wolnosciowiec.wiki.manager.storage');
-        $processor = $this->get('wolnosciowiec.wiki.processor');
 
         try {
-            $repositoryName = $storageManager->getRepositoryName($payload->getUrl(), $payload->getBranch());
-            $path = $fetcher->cloneRepository($fetcherName, $payload->getUrl(), $payload->getBranch());
-            $processor->processDirectory($path, $repositoryName);
+            $this->get('wolnosciowiec.wiki.handler.payload')->handlePayload($payload, $fetcherName);
 
-        } catch (\Exception $e) {
-            $this->get('logger')->critical(
-                'Push failed for ' . $payload->getUrl() . '@' . $payload->getBranch() . ': ' . $e->getMessage());
-
+        } catch (PushFailedException $e) {
             return new JsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),

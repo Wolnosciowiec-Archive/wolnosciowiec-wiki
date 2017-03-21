@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Reference;
 use WikiBundle\Exception\InvalidConfigurationException;
-use WikiBundle\Service\HostHandler\HostHandler;
+use WikiBundle\Service\RepositoryProvider\RepositoryProvider;
 
 class WikiExtension extends Extension
 {
@@ -27,7 +27,7 @@ class WikiExtension extends Extension
         $this->prepareFetcher($container, $config);
         $this->preparePayloadFactory($container);
         $this->prepareStorageManager($container, $config);
-        $this->prepareHostHandler($container, $config);
+        $this->prepareRepositoryProvider($container, $config);
     }
 
     private function prepareFetcher(ContainerBuilder $container, array $config)
@@ -62,15 +62,15 @@ class WikiExtension extends Extension
         }
     }
 
-    private function prepareHostHandler(ContainerBuilder $container, array $config)
+    private function prepareRepositoryProvider(ContainerBuilder $container, array $config)
     {
-        $handler = $container->findDefinition('wolnosciowiec.wiki.handler.host');
+        $handler = $container->findDefinition('wolnosciowiec.wiki.provider.repository');
         $repositoriesIndexedByHost = [];
 
         foreach ($config['repositories'] as $name => $repository) {
             foreach ($repository['domains'] ?? [] as $domain) {
 
-                $domain = HostHandler::normalizeDomainName($domain);
+                $domain = RepositoryProvider::normalizeDomainName($domain);
 
                 if (isset($repositoriesIndexedByHost[$domain])) {
                     throw new InvalidConfigurationException('Conflict: Domain "' . $domain . '" assigned to multiple repositories');

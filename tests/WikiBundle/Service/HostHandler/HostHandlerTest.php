@@ -1,20 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace WikiBundle\Service\HostHandler;
+namespace WikiBundle\Service\RepositoryProvider;
 
 use Tests\TestCase;
 
 /**
- * @see HostHandler
+ * @see RepositoryProvider
  */
-class HostHandlerTest extends TestCase
+class RepositoryProviderTest extends TestCase
 {
     /**
-     * @see HostHandler::getRepositoryForDomain()
+     * @see RepositoryProvider::getRepositoryForDomain()
      */
     public function testValidGetRepositoryForDomain()
     {
-        $repository = $this->container->get('wolnosciowiec.wiki.handler.host')
+        $repository = $this->container->get('wolnosciowiec.wiki.provider.repository')
             ->getRepositoryForDomain('faq.dev');
 
         $this->assertSame('anarchifaq', $repository->getName());
@@ -25,11 +25,11 @@ class HostHandlerTest extends TestCase
     }
 
     /**
-     * @see HostHandler::getRepositoryForDomain()
+     * @see RepositoryProvider::getRepositoryForDomain()
      */
     public function testMissingGetRepositoryForDomain()
     {
-        $repository = $this->container->get('wolnosciowiec.wiki.handler.host')
+        $repository = $this->container->get('wolnosciowiec.wiki.provider.repository')
             ->getRepositoryForDomain('non-existing-repository');
 
         $this->assertFalse($repository->isValid());
@@ -68,7 +68,7 @@ class HostHandlerTest extends TestCase
      */
     public function testNormalization(string $input, string $expected)
     {
-        $hostHandler = $this->container->get('wolnosciowiec.wiki.handler.host');
-        $this->assertSame($expected, $hostHandler::normalizeDomainName($input));
+        $repositoryProvider = $this->container->get('wolnosciowiec.wiki.provider.repository');
+        $this->assertSame($expected, $repositoryProvider::normalizeDomainName($input));
     }
 }

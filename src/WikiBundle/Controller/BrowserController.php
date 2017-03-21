@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Stopwatch\Stopwatch;
 use WikiBundle\Domain\Service\Browser\PagesBrowserInterface;
 use WikiBundle\Exception\Browser\PageNotFoundException;
 
@@ -26,9 +27,13 @@ class BrowserController extends Controller
     public function indexAction(Request $request, string $groupName, string $url)
     {
         try {
+            $this->get('debug.stopwatch')->start('browser.render');
+
             $content = $this->getBrowser()->getPageContent($groupName, $url);
-        }
-        catch (PageNotFoundException $e) {
+
+            $this->get('debug.stopwatch')->stop('browser.render');
+
+        } catch (PageNotFoundException $e) {
             throw new NotFoundHttpException('Sorry, the "' . $url . '" page was not found in "' . $groupName . '" group');
         }
 

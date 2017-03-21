@@ -1,0 +1,9 @@
+services:
+    wolnosciowiec.wiki.extension.layout:
+        class: WikiBundle\Extension\Layout\Event\LayoutEventListener
+        arguments:
+            storageManager: "@wolnosciowiec.wiki.manager.storage"
+            logger:         "@logger"
+        tags:
+            - { name: kernel.event_listener, event: "postCompileFile" }
+

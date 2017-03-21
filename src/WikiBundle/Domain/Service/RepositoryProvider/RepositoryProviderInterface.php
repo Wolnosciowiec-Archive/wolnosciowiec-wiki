@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace WikiBundle\Domain\Service\HostHandler;
+namespace WikiBundle\Domain\Service\RepositoryProvider;
 
 use WikiBundle\Domain\Entity\RepositoryDefinition;
 
-interface HostHandlerInterface
+interface RepositoryProviderInterface
 {
     /**
      * @param string $domainName
@@ -19,4 +19,14 @@ interface HostHandlerInterface
      * @return RepositoryDefinition
      */
     public function getRepositoryForDomain(string $domainName): RepositoryDefinition;
+
+    /**
+     * @return RepositoryDefinition[]
+     */
+    public function getAll(): array;
+
+    /**
+     * @return RepositoryDefinition[]
+     */
+    public function getIndexedByAddress(): array;
 }

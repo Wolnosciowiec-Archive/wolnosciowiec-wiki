@@ -2,6 +2,7 @@ imports:
     - { resource: fetchers.yml }
     - { resource: payload_factories.yml }
     - { resource: processors.yml }
+    - { resource: extensions.yml }
 
 services:
     wolnosciowiec.wiki.browser:
@@ -13,6 +14,7 @@ services:
         class: WikiBundle\Service\Fetcher\FetcherService
         arguments:
             storageManager: "@wolnosciowiec.wiki.manager.storage"
+            logger:         "@logger"
 
     wolnosciowiec.wiki.factory.payload:
         class: WikiBundle\Factory\Payload\PayloadFactory
@@ -27,9 +29,17 @@ services:
             compiledFilesPath: '%kernel.root_dir%/Compiled'
             filesystem: "@wolnosciowiec.wiki.manager.filesystem"
 
-    wolnosciowiec.wiki.handler.host:
-        class: WikiBundle\Service\HostHandler\HostHandler
+    wolnosciowiec.wiki.provider.repository:
+        class: WikiBundle\Service\RepositoryProvider\RepositoryProvider
         arguments:
             serializer: "@serializer"
 
+    wolnosciowiec.wiki.handler.payload:
+        class: WikiBundle\Service\PayloadHandler\PayloadHandlerService
+        arguments:
+            fetcherService: "@wolnosciowiec.wiki.fetcher"
+            payloadFactory: "@wolnosciowiec.wiki.factory.payload"
+            storageManager: "@wolnosciowiec.wiki.manager.storage"
+            fileProcessor:  "@wolnosciowiec.wiki.processor"
+            logger:         "@logger"
 

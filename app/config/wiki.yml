@@ -1,15 +1,15 @@
 wiki:
     repositories:
-        anarchifaq:
-            address: "https://github.com/Wolnosciowiec/anarchi-faq-pl"
-            branch:  "master"
-            fetcher: "git"
-            domains: ["faq.wolnosciowiec.net", "faq.dev"]
-            index_path: "/index.md"
-            public: true
+        #anarchifaq:
+        #    address: "https://github.com/Wolnosciowiec/anarchi-faq-pl"
+        #    branch:  "master"
+        #    fetcher: "git"
+        #    domains: ["faq.wolnosciowiec.net", "faq.dev"]
+        #    index_path: "/index.md"
+        #    public: true
 
         anarchifaq_local:
-            address: "%kernel.root_dir%/Storage/anarchifaq"
+            address: "%kernel.root_dir%/Storage/anarchifaq_local"
             branch:  "master"
             fetcher: "filesystem"
             domains: ["faq_local.dev"]

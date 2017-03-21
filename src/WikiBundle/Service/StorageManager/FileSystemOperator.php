@@ -5,6 +5,8 @@ namespace WikiBundle\Service\StorageManager;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use WikiBundle\Domain\Service\StorageManager\FileSystemAccessInterface;
 
 /**
@@ -46,6 +48,23 @@ class FileSystemOperator implements FileSystemAccessInterface
     public function isDir(string $path): bool
     {
         return is_dir($path);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isFile(string $path): bool
+    {
+        return is_file($path);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isHidden(string $path): bool
+    {
+        return substr(basename($path), 0, 1) === '.'
+            || substr(dirname($path), 0, 1) === '.';
     }
 
     /**
@@ -100,5 +119,38 @@ class FileSystemOperator implements FileSystemAccessInterface
     public function copy(string $src, string $destination)
     {
         $this->fs->copy($src, $destination, true);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function findFiles(string $path): array
+    {
+        $finder = new Finder();
+        $files = $finder->files()->in($path);
+        $results = [];
+
+        /** @var \SplFileInfo[] $files */
+        foreach ($files as $file) {
+            $results[] = $file->getRealPath();
+        }
+
+        return $results;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function guessMimeType(string $path): string
+    {
+        return MimeTypeGuesser::getInstance()->guess($path);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function guessExtension(string $path): string
+    {
+        return pathinfo($path, PATHINFO_EXTENSION);
     }
 }

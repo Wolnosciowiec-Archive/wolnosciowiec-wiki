@@ -118,4 +118,12 @@ class RepositoryDefinition
     {
         return $this->name;
     }
+
+    /**
+     * @return Payload
+     */
+    public function createPayload()
+    {
+        return new Payload($this->getAddress(), $this->getBranch());
+    }
 }

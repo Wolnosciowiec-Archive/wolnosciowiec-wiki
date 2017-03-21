@@ -4,3 +4,7 @@ services:
         arguments:
             compilerFactory: "@wolnosciowiec.contentcompiler.factory"
             storageManager: "@wolnosciowiec.wiki.manager.storage"
+            logger: "@logger"
+            filesystem: "@wolnosciowiec.wiki.manager.filesystem"
+            dispatcher: "@event_dispatcher"
+            cacheDir: "%kernel.cache_dir%"

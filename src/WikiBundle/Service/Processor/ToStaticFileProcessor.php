@@ -4,81 +4,139 @@ namespace WikiBundle\Service\Processor;
 
 use ContentCompilerBundle\Factory\CompilerFactory;
 use ContentCompilerBundle\Service\ContentCompiler\ContentCompilerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
+use WikiBundle\Domain\Context\FileProcessContext;
+use WikiBundle\Domain\Event\FilePostCompileEvent;
+use WikiBundle\Domain\Processor\FileProcessorInterface;
+use WikiBundle\Domain\Service\StorageManager\FileSystemAccessInterface;
 use WikiBundle\Domain\Service\StorageManager\StorageManagerInterface;
 
 /**
  * Compiles to static files
  */
-class ToStaticFileProcessor
+class ToStaticFileProcessor implements FileProcessorInterface
 {
-    /**
-     * @var Finder $finder
-     */
-    private $finder;
+    const EVENT_POST_COMPILE = 'postCompileFile';
 
-    /**
-     * @var CompilerFactory $compilerFactory
-     */
+    /** @var CompilerFactory $compilerFactory */
     private $compilerFactory;
 
-    /**
-     * @var StorageManagerInterface $storageManager
-     */
+    /** @var StorageManagerInterface $storageManager */
     private $storageManager;
+
+    /** @var LoggerInterface $logger */
+    private $logger;
+
+    /** @var FileSystemAccessInterface $filesystem */
+    private $filesystem;
+
+    /** @var EventDispatcherInterface $dispatcher */
+    private $dispatcher;
+
+    /** @var string $cacheDir */
+    private $cacheDir;
 
     public function __construct(
         CompilerFactory $compilerFactory,
-        StorageManagerInterface $storageManager
+        StorageManagerInterface $storageManager,
+        LoggerInterface $logger,
+        FileSystemAccessInterface $filesystem,
+        EventDispatcherInterface $dispatcher,
+        string $cacheDir
     ) {
-        $this->finder = new Finder();
-        $this->compilerFactory = $compilerFactory;
-        $this->storageManager = $storageManager;
+        $this->filesystem         = $filesystem;
+        $this->compilerFactory    = $compilerFactory;
+        $this->storageManager     = $storageManager;
+        $this->logger             = $logger;
+        $this->dispatcher         = $dispatcher;
+        $this->cacheDir           = $cacheDir;
     }
 
     /**
-     * Process whole directory
-     *
-     * @param string $repositoryPath
-     * @param string $repositoryName
+     * @inheritdoc
      */
-    public function processDirectory(string $repositoryPath, string $repositoryName)
+    public function processRepository(string $repositoryPath, string $repositoryName)
     {
-        $files = $this->finder->files()->in($repositoryPath);
+        $repositoryPath = $repositoryPath . '/src';
+        $files = $this->filesystem->findFiles($repositoryPath);
 
-        foreach ($files as $file) {
-            $this->processFile($file, $repositoryName);
+        foreach ($files as $path) {
+            $this->processFile(
+                new FileProcessContext([
+                    'path' => $path,
+                    'repositoryName' => $repositoryName,
+                    'repositoryPath' => $repositoryPath,
+                ])
+            );
         }
     }
 
     /**
-     * Process single file
-     *
-     * @param SplFileInfo $file
-     * @param string $repositoryName
-     *
-     * @return string Target path
+     * @inheritdoc
      */
-    public function processFile(SplFileInfo $file, string $repositoryName): string
+    public function processFile(FileProcessContext $context): string
     {
-        if ($file->isDir()) {
+        if ($this->filesystem->isDir($context->getPath())) {
+            $this->logger->debug('Skipping "' . $context->getPath() . '" (reason: directory)');
+            return '';
+        }
+        elseif ($this->filesystem->isHidden($context->getPath()) && !$context->isCompilationForced()) {
+            $this->logger->debug('Skipping "' . $context->getPath() . '" (reason: hidden file)');
             return '';
         }
 
-        $mime      = MimeTypeGuesser::getInstance()->guess($file->getRealPath());
-        $extension = $file->getExtension();
-        $compiler   = $this->compilerFactory->getCompilerThatHandles($extension, $mime);
-        $targetPath = $this->storageManager->findCompiledPathFor($repositoryName, $file->getRealPath());
+        $this->logger->info('Processing "' . $context->getPath() . '"');
 
-        file_put_contents(
-            $targetPath,
-            $compiler->compileFromString(file_get_contents($file->getRealPath()), false, [
-                ContentCompilerInterface::ESCAPE_LINKS => false,
-            ])
+        $mime      = $this->filesystem->guessMimeType($context->getPath());
+        $extension = $this->filesystem->guessExtension($context->getPath());
+        $compiler   = $this->compilerFactory->getCompilerThatHandles($extension, $mime);
+        $targetPath = $this->storageManager->findCompiledPathFor($context->getRepositoryName(), $context->getPath());
+
+        // allow events to modify the compilation behavior
+        $fileContents = $this->filesystem->readFile($context->getPath());
+        $variables    = $this->getVariables(
+            array_merge(
+                [
+                    'self_path' => $context->getPath(),
+                    'repository_name' => $context->getRepositoryName(),
+                    'repository_path' => $context->getRepositoryPath(),
+                ],
+                $context->getVariables()
+            )
         );
 
-        return $targetPath;
+        $context->setCompiledContent($compiler->compileFromString($fileContents, false, array_merge([
+            ContentCompilerInterface::ESCAPE_LINKS => false,
+            ContentCompilerInterface::VARIABLES    => $variables,
+            ContentCompilerInterface::INCLUDE_PATH => $context->getRepositoryPath(),
+            ContentCompilerInterface::CACHE_DIR    => $this->cacheDir,
+        ], $context->getCompilationOptions())));
+
+        if ($context->willTriggerEvents() === true) {
+            $this->dispatchPostCompileEvent($context);
+        }
+
+        $this->filesystem->write(
+            $targetPath,
+            $context->getCompiledContent()
+        );
+
+        return $context->getCompiledContent();
+    }
+
+    protected function dispatchPostCompileEvent(FileProcessContext $context)
+    {
+        $event = new FilePostCompileEvent($context, $this);
+        $this->dispatcher->dispatch(self::EVENT_POST_COMPILE, $event);
+    }
+
+    protected function getVariables(array $context)
+    {
+        $context['compile_date_time'] = new \DateTime();
+        return $context;
     }
 }

@@ -18,4 +18,9 @@ interface StorageManagerInterface
     public function getRepositoryName(string $url, string $branch);
 
     public function findCompiledPathFor(string $repositoryName, string $srcFilePath): string;
+
+    /**
+     * @return FileSystemAccessInterface
+     */
+    public function getFilesystem(): FileSystemAccessInterface;
 }
