@@ -1,0 +1,9 @@
+MetadataBundle\Domain\Entity\Article:
+    exclusion_policy: none
+
+    properties:
+        slug:
+            type: string
+
+        title:
+            type: string

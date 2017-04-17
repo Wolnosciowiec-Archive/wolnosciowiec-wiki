@@ -80,4 +80,18 @@ class RepositoryProvider implements RepositoryProviderInterface
 
         return $results;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOneByName(string $repositoryName): RepositoryDefinition
+    {
+        foreach ($this->getAll() as $repositoryDefinition) {
+            if ($repositoryDefinition->getName() === $repositoryName) {
+                return $repositoryDefinition;
+            }
+        }
+
+        return new RepositoryDefinition();
+    }
 }

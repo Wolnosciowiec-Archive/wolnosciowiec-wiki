@@ -1,0 +1,35 @@
+
+<!doctype html>
+<html>
+    <head>
+        <title>{{ status_text }}</title>
+        <meta charset="{{ _charset }}" />
+        <style>
+            body { text-align: center; }
+            h1 {
+                font-size: 50px;
+                background: linear-gradient(to right bottom, black 50%, red 50%);
+                -webkit-background-clip: text;
+                -moz-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            body { font: 20px Helvetica, sans-serif; color: #333; }
+            article { display: block; text-align: left; width: 650px; margin: 0 auto; padding-bottom: 50px; }
+            a { color: #dc8100; text-decoration: none; }
+            a:hover { color: #333; text-decoration: none; }
+            #powered_by {
+                float: left;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <article>
+            <h1><span class="name-first">Ups!</span> <span class="name-second">{{ status_code }} {{ status_text }}</span></h1>
+            <div>
+                <p>Please contact us if you think that there is an invalid link on the page.</p>
+                <p id="powered_by">Powered by <a href="https://github.com/Wolnosciowiec/wolnosciowiec-wiki" target="_blank">wolnosciowiec.net Wiki</a></p>
+            </div>
+        </article>
+    </body>
+</html>

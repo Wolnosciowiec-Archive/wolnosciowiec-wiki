@@ -2,4 +2,7 @@
 
 namespace WikiBundle\Exception;
 
-class PushFailedException extends \Exception { }
+class PushFailedException extends \Exception
+{
+
+}

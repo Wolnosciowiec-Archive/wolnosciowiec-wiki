@@ -19,5 +19,8 @@
 config/wiki.yml
 src/*/
 !src/WikiBundle
+!src/LayoutBundle
+!src/MetadataBundle
+!src/MetadataCollectionsBundle
 !src/.htaccess
 !src/README.md

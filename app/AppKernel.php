@@ -19,8 +19,11 @@ class AppKernel extends Kernel
             new \JMS\SerializerBundle\JMSSerializerBundle(),
 
             // Wolnościowiec namespace
-            new WikiBundle\WikiBundle(),
             new ContentCompilerBundle(),
+            new WikiBundle\WikiBundle(),
+            new \MetadataBundle\MetadataBundle(),
+            new \MetadataCollectionsBundle\MetadataCollectionsBundle(),
+            new \LayoutBundle\LayoutBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

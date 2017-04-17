@@ -2,13 +2,16 @@ imports:
     - { resource: fetchers.yml }
     - { resource: payload_factories.yml }
     - { resource: processors.yml }
-    - { resource: extensions.yml }
 
 services:
     wolnosciowiec.wiki.browser:
-        class: WikiBundle\Service\Browser\StaticPagesBrowser
+        class: WikiBundle\Service\Browser\DynamicPagesBrowser
         arguments:
-            groupsDirectory: '%kernel.root_dir%/Compiled'
+            processor:  "@wolnosciowiec.wiki.processor"
+            provider:   "@wolnosciowiec.wiki.provider.repository"
+            storage:    "@wolnosciowiec.wiki.manager.storage"
+            router:     "@wolnosciowiec.wiki.services.router"
+            filesystem: "@wolnosciowiec.wiki.manager.filesystem"
 
     wolnosciowiec.wiki.fetcher:
         class: WikiBundle\Service\Fetcher\FetcherService
@@ -42,4 +45,17 @@ services:
             storageManager: "@wolnosciowiec.wiki.manager.storage"
             fileProcessor:  "@wolnosciowiec.wiki.processor"
             logger:         "@logger"
+
+    wolnosciowiec.wiki.expression:
+        class: Symfony\Component\ExpressionLanguage\ExpressionLanguage
+
+    wolnosciowiec.wiki.services.router:
+        class: WikiBundle\Service\Routing\Router
+        arguments:
+            cache: "@repository_cache"
+            filesystem: "@wolnosciowiec.wiki.manager.filesystem"
+            repositories: "@wolnosciowiec.wiki.provider.repository"
+            storageManager: "@wolnosciowiec.wiki.manager.storage"
+            logger: "@logger"
+            eventDispatcher: "@event_dispatcher"
 

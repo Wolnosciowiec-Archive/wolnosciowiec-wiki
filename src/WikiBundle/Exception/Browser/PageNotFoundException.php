@@ -2,4 +2,7 @@
 
 namespace WikiBundle\Exception\Browser;
 
-class PageNotFoundException extends \Exception { }
+class PageNotFoundException extends \Exception
+{
+
+}

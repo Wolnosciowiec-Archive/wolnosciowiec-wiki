@@ -10,10 +10,14 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use WikiBundle\Domain\Context\FileProcessContext;
+use WikiBundle\Domain\Context\RepositoryProcessContext;
 use WikiBundle\Domain\Event\FilePostCompileEvent;
+use WikiBundle\Domain\Event\FilePreCompileEvent;
+use WikiBundle\Domain\Event\RepositoryPreProcessEvent;
 use WikiBundle\Domain\Processor\FileProcessorInterface;
 use WikiBundle\Domain\Service\StorageManager\FileSystemAccessInterface;
 use WikiBundle\Domain\Service\StorageManager\StorageManagerInterface;
+use WikiBundle\Exception\Processor\FileNotFoundException;
 
 /**
  * Compiles to static files
@@ -21,6 +25,8 @@ use WikiBundle\Domain\Service\StorageManager\StorageManagerInterface;
 class ToStaticFileProcessor implements FileProcessorInterface
 {
     const EVENT_POST_COMPILE = 'postCompileFile';
+    const EVENT_PRE_COMPILE  = 'preCompileFile';
+    const EVENT_PRE_PROCESS_REPOSITORY = 'preProcessRepository';
 
     /** @var CompilerFactory $compilerFactory */
     private $compilerFactory;
@@ -61,10 +67,15 @@ class ToStaticFileProcessor implements FileProcessorInterface
      */
     public function processRepository(string $repositoryPath, string $repositoryName)
     {
-        $repositoryPath = $repositoryPath . '/src';
-        $files = $this->filesystem->findFiles($repositoryPath);
+        $processContext = new RepositoryProcessContext([
+            'repositoryPath' => $repositoryPath . '/src',
+            'files'          => $this->filesystem->findFiles($repositoryPath . '/src'),
+            'repositoryName' => $repositoryName,
+        ]);
 
-        foreach ($files as $path) {
+        $this->dispatchPreRepositoryProcessEvent($processContext);
+
+        foreach ($processContext->getFiles() as $path) {
             $this->processFile(
                 new FileProcessContext([
                     'path' => $path,
@@ -88,22 +99,35 @@ class ToStaticFileProcessor implements FileProcessorInterface
             $this->logger->debug('Skipping "' . $context->getPath() . '" (reason: hidden file)');
             return '';
         }
-
-        $this->logger->info('Processing "' . $context->getPath() . '"');
+        elseif (!$this->filesystem->isFile($context->getPath())) {
+            throw new FileNotFoundException('File "' . basename($context->getPath()) . '" cannot be found');
+        }
 
         $mime      = $this->filesystem->guessMimeType($context->getPath());
         $extension = $this->filesystem->guessExtension($context->getPath());
         $compiler   = $this->compilerFactory->getCompilerThatHandles($extension, $mime);
-        $targetPath = $this->storageManager->findCompiledPathFor($context->getRepositoryName(), $context->getPath());
+
+        $targetPath = $this->storageManager->findCompiledPathFor(
+            $context->getRepositoryName(),
+            $context->getTargetPath() ? $context->getTargetPath() : $context->getPath()
+        );
+
+        $this->logger->info('Processing "' . $context->getPath() . '"');
+        $this->logger->info(' > "' . $targetPath . '"');
+
+        if ($context->willTriggerEvents() === true) {
+            $this->dispatchPreCompileEvent($context);
+        }
 
         // allow events to modify the compilation behavior
         $fileContents = $this->filesystem->readFile($context->getPath());
         $variables    = $this->getVariables(
             array_merge(
                 [
-                    'self_path' => $context->getPath(),
-                    'repository_name' => $context->getRepositoryName(),
-                    'repository_path' => $context->getRepositoryPath(),
+                    'selfPath' => $context->getPath(),
+                    'lastUpdatedAt'  => $this->filesystem->getLastModTime($context->getPath()),
+                    'repositoryName' => $context->getRepositoryName(),
+                    'repositoryPath' => $context->getRepositoryPath(),
                 ],
                 $context->getVariables()
             )
@@ -128,6 +152,18 @@ class ToStaticFileProcessor implements FileProcessorInterface
         return $context->getCompiledContent();
     }
 
+    protected function dispatchPreRepositoryProcessEvent(RepositoryProcessContext $context)
+    {
+        $event = new RepositoryPreProcessEvent($context, $this);
+        $this->dispatcher->dispatch(self::EVENT_PRE_PROCESS_REPOSITORY, $event);
+    }
+
+    protected function dispatchPreCompileEvent(FileProcessContext $context)
+    {
+        $event = new FilePreCompileEvent($context, $this);
+        $this->dispatcher->dispatch(self::EVENT_PRE_COMPILE, $event);
+    }
+
     protected function dispatchPostCompileEvent(FileProcessContext $context)
     {
         $event = new FilePostCompileEvent($context, $this);
@@ -136,7 +172,12 @@ class ToStaticFileProcessor implements FileProcessorInterface
 
     protected function getVariables(array $context)
     {
-        $context['compile_date_time'] = new \DateTime();
+        $context['compileDateTime'] = new \DateTime();
         return $context;
+    }
+
+    public function getFilesystem(): FileSystemAccessInterface
+    {
+        return $this->filesystem;
     }
 }

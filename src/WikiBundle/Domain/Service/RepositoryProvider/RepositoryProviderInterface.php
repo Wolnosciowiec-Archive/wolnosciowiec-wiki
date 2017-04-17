@@ -29,4 +29,10 @@ interface RepositoryProviderInterface
      * @return RepositoryDefinition[]
      */
     public function getIndexedByAddress(): array;
+
+    /**
+     * @param string $repositoryName
+     * @return RepositoryDefinition
+     */
+    public function getOneByName(string $repositoryName): RepositoryDefinition;
 }

@@ -61,6 +61,58 @@ class FileSystemOperator implements FileSystemAccessInterface
     /**
      * @inheritdoc
      */
+    public function getDirName(string $path): string
+    {
+        return dirname($path);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFileName(string $path): string
+    {
+        return pathinfo($path, PATHINFO_FILENAME);
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getFileExtension(string $path): string
+    {
+        return pathinfo($path, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFileBasename(string $path): string
+    {
+        return pathinfo($path, PATHINFO_BASENAME);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLastModTime(string $path): \DateTime
+    {
+        $dateTime = new \DateTime();
+        $dateTime->setTimestamp(filemtime($path));
+
+        return $dateTime;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFileSize(string $path): int
+    {
+        return filesize($path);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function isHidden(string $path): bool
     {
         return substr(basename($path), 0, 1) === '.'
@@ -73,6 +125,14 @@ class FileSystemOperator implements FileSystemAccessInterface
     public function readFile(string $path): string
     {
         return file_get_contents($path);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function readFileAsStream(string $path)
+    {
+        return fopen($path, 'rb');
     }
 
     /**

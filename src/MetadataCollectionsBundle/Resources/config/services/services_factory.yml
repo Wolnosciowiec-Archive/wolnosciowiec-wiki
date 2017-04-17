@@ -1,0 +1,14 @@
+services:
+    wiki.extension.metadata_collections.factory.definition:
+        class: MetadataCollectionsBundle\Factory\DefinitionFactory
+        arguments:
+            serializer: "@serializer"
+
+    wiki.extension.metadata_collections.factory.collection:
+        class: MetadataCollectionsBundle\Factory\CollectionFactory
+        arguments:
+            filesystem: "@wolnosciowiec.wiki.manager.filesystem"
+            metadataFactory: "@wolnosciowiec.wiki.factory.metadata"
+            expressionLanguage: "@wolnosciowiec.wiki.expression"
+            routeGenerator: "@wiki.extension.metadata_collections.routing.generator"
+

@@ -2,4 +2,7 @@
 
 namespace WikiBundle\Exception;
 
-class InvalidConfigurationException extends \Exception { }
+class InvalidConfigurationException extends \Exception
+{
+
+}

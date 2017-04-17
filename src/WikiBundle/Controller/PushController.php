@@ -17,7 +17,7 @@ class PushController extends Controller
         ignore_user_abort(true);
     }
 
-    public function indexAction(Request $request, $fetcherName)
+    public function indexAction(Request $request, string $fetcherName)
     {
         $payload = $this->get('wolnosciowiec.wiki.factory.payload')->create($request->getContent());
 

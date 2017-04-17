@@ -1,0 +1,18 @@
+MetadataCollectionsBundle\Entity\Query:
+    exclusion_policy: none
+
+    properties:
+        filter:
+            type: string
+
+        paginationMaxResults:
+            type: int
+
+        paginationLinkTemplate:
+            type: string
+
+        paginationSourceFile:
+            type: string
+
+        reverseResults:
+            type: boolean

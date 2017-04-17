@@ -4,6 +4,7 @@ namespace WikiBundle\Domain\Processor;
 
 use Symfony\Component\Finder\SplFileInfo;
 use WikiBundle\Domain\Context\FileProcessContext;
+use WikiBundle\Domain\Service\StorageManager\FileSystemAccessInterface;
 
 interface FileProcessorInterface
 {
@@ -23,4 +24,6 @@ interface FileProcessorInterface
      * @return string File contents
      */
     public function processFile(FileProcessContext $context): string;
+
+    public function getFilesystem(): FileSystemAccessInterface;
 }

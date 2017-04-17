@@ -30,6 +30,11 @@ class WikiExtension extends Extension
         $this->prepareRepositoryProvider($container, $config);
     }
 
+    /**
+     * Inject different fetching providers eg. Git, Local filesystem into service
+     *
+     * @see FetcherService::addFetcher()
+     */
     private function prepareFetcher(ContainerBuilder $container, array $config)
     {
         $fetcherService = $container->findDefinition('wolnosciowiec.wiki.fetcher');
@@ -40,6 +45,9 @@ class WikiExtension extends Extension
         }
     }
 
+    /**
+     * @see StorageManager::setKnownRepositories()
+     */
     private function prepareStorageManager(ContainerBuilder $container, array $config)
     {
         $fetcherService = $container->findDefinition('wolnosciowiec.wiki.manager.storage');
@@ -52,6 +60,9 @@ class WikiExtension extends Extension
         $fetcherService->addMethodCall('setKnownRepositories', [$knownRepositories]);
     }
 
+    /**
+     * @see PayloadFactory::addFactory()
+     */
     private function preparePayloadFactory(ContainerBuilder $container)
     {
         $factory = $container->findDefinition('wolnosciowiec.wiki.factory.payload');

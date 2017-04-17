@@ -1,0 +1,16 @@
+services:
+    wiki.extension.metadata_collections.collections_to_template:
+        class: MetadataCollectionsBundle\Event\CollectionsToTemplateListener
+        arguments:
+            collectionRepository: "@wiki.extension.metadata_collections.repository.collection"
+            dataProvider: "@wiki.extension.metadata_collections.provider.configuration"
+        tags:
+            - { name: kernel.event_listener, event: "preCompileFile", priority: 150 }
+
+    wiki.extension.metadata_collections.router_registration:
+        class: MetadataCollectionsBundle\Event\RouterRegistrationListener
+        arguments:
+            repository: "@wiki.extension.metadata_collections.repository.collection"
+        tags:
+            - { name: kernel.event_listener, event: "routerPostCollect", priority: 50}
+

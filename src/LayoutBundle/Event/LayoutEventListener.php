@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace WikiBundle\Extension\Layout\Event;
+namespace LayoutBundle\Event;
 
 use Psr\Log\LoggerInterface;
 use WikiBundle\Domain\Event\FilePostCompileEvent;
@@ -28,6 +28,8 @@ class LayoutEventListener
         '.layout.twig',
         '.layout.j2',
         '.layout.html',
+        '.layout.tpl',
+        '.layout.blade',
     ];
 
     /** @var StorageManagerInterface $storageManager */
@@ -68,7 +70,7 @@ class LayoutEventListener
             $layoutContext->setPath($layoutFilePath);
             $layoutContext->setTriggerEvents(false);
             $layoutContext->setForceCompile(true);
-            $layoutContext->setVariables([
+            $layoutContext->addVariables([
                 self::LAYOUT_CONTENT_VAR_NAME => $event->getContext()->getCompiledContent(),
             ]);
 

@@ -1,1 +1,0 @@
-Default provided extensions that are modifying the application behavior using events

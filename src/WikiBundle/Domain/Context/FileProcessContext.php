@@ -2,7 +2,7 @@
 
 namespace WikiBundle\Domain\Context;
 
-class FileProcessContext
+class FileProcessContext extends AbstractContext
 {
     protected $path = '';
     protected $repositoryName = '';
@@ -12,19 +12,8 @@ class FileProcessContext
     protected $variables = [];
     protected $compiledContent = '';
     protected $forceCompile = false;
-
-    public function __construct(array $parameters)
-    {
-        foreach ($parameters as $name => $value) {
-            $methodName = 'set' . ucfirst($name);
-
-            if (!method_exists($this, $methodName)) {
-                throw new \InvalidArgumentException('Invalid parameter "' . $name . '" passed to the $parameters');
-            }
-
-            $this->$methodName($value);
-        }
-    }
+    protected $targetPath = '';
+    protected $page = 1;
 
     public function setPath($path): FileProcessContext
     {
@@ -56,9 +45,15 @@ class FileProcessContext
         return $this;
     }
 
-    public function setVariables($variables): FileProcessContext
+    public function setVariables(array $variables): FileProcessContext
     {
         $this->variables = $variables;
+        return $this;
+    }
+
+    public function addVariables(array $variables): FileProcessContext
+    {
+        $this->variables = array_merge($this->variables, $variables);
         return $this;
     }
 
@@ -112,5 +107,27 @@ class FileProcessContext
     public function isCompilationForced(): bool
     {
         return $this->forceCompile;
+    }
+
+    public function setTargetPath(string $targetPath): FileProcessContext
+    {
+        $this->targetPath = $targetPath;
+        return $this;
+    }
+
+    public function getTargetPath(): string
+    {
+        return $this->targetPath;
+    }
+
+    public function setPage($page): FileProcessContext
+    {
+        $this->page = $page;
+        return $this;
+    }
+
+    public function getPage(): int
+    {
+        return $this->page;
     }
 }

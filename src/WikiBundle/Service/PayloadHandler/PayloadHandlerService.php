@@ -65,7 +65,7 @@ class PayloadHandlerService
                 'Push failed for ' . $payload->getUrl() . '@' . $payload->getBranch() . ': ' . $e->getMessage());
 
             throw new PushFailedException(
-                'Push failed for ' . $payload->getUrl() . '@' . $payload->getBranch() . ': ' . $e->getMessage(), null, $e);
+                'Push failed for ' . $payload->getUrl() . '@' . $payload->getBranch() . ': ' . $e->getMessage(), 0, $e);
         }
 
         return true;

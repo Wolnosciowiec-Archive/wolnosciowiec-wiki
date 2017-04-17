@@ -2,4 +2,7 @@
 
 namespace WikiBundle\Exception\Fetcher;
 
-class RepositoryNotFoundException extends \Exception { }
+class RepositoryNotFoundException extends \Exception
+{
+
+}

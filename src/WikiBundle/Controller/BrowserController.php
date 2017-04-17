@@ -3,9 +3,11 @@
 namespace WikiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Stopwatch\Stopwatch;
 use WikiBundle\Domain\Service\Browser\PagesBrowserInterface;
@@ -29,6 +31,21 @@ class BrowserController extends Controller
         try {
             $this->get('debug.stopwatch')->start('browser.render');
 
+            if ($this->getBrowser()->isAsset($groupName, $url)) {
+                $asset = $this->getBrowser()->getAssetStream($groupName, $url);
+
+                if (empty($asset)) {
+                    throw new AccessDeniedException($url);
+                }
+
+                return new StreamedResponse(function () use ($asset) {
+                    fpassthru($asset['stream']);
+                }, 200, [
+                    'Content-Type' => $asset['mime'],
+                    'Content-Length' => $asset['length'],
+                ]);
+            }
+
             $content = $this->getBrowser()->getPageContent($groupName, $url);
 
             $this->get('debug.stopwatch')->stop('browser.render');
@@ -47,6 +64,7 @@ class BrowserController extends Controller
 
         return new Response($content, 200, [
             'ETag' => $this->getBrowser()->hashContent($content),
+            'X-Powered-By' => 'Wolnosciowiec Wiki',
         ]);
     }
 }

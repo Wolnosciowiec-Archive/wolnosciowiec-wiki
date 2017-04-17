@@ -1,0 +1,20 @@
+services:
+    wolnosciowiec.wiki.factory.metadata:
+        class: MetadataBundle\Factory\MetadataFactory
+        arguments:
+            serializer: "@serializer"
+            storageManager: "@wolnosciowiec.wiki.manager.storage"
+
+    wiki.extension.metadata.article:
+        class: MetadataBundle\Domain\Entity\Article
+        tags:
+            - { name: metadata }
+
+    wolnosciowiec.wiki.extension.metadata:
+        class: MetadataBundle\Event\MetadataEventListener
+        arguments:
+            metadataFactory: "@wolnosciowiec.wiki.factory.metadata"
+            storageManager:  "@wolnosciowiec.wiki.manager.storage"
+            logger:          "@logger"
+        tags:
+            - { name: kernel.event_listener, event: "preCompileFile", priority: 50 }

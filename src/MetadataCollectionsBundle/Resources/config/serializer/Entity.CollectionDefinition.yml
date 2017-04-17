@@ -1,0 +1,24 @@
+MetadataCollectionsBundle\Entity\CollectionDefinition:
+    exclusion_policy: none
+
+    properties:
+        reference:
+            type: boolean
+
+        projectPath:
+            type: string
+
+        path:
+            type: string
+
+        type:
+            type: string
+
+        expression:
+            type: string
+
+        alias:
+            type: string
+
+        query:
+            type: MetadataCollectionsBundle\Entity\Query

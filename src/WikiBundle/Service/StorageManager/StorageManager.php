@@ -62,7 +62,7 @@ class StorageManager implements StorageManagerInterface
      */
     public function findCompiledPathFor(string $repositoryName, string $srcFilePath): string
     {
-        $filePath = str_replace(realpath($this->storagePath), '', realpath($srcFilePath));
+        $filePath = str_replace($this->normalizePath($this->storagePath), '', $this->normalizePath($srcFilePath));
         $dir = $this->compiledFilesPath . '/' . dirname($filePath);
 
         if (!$this->filesystem->isDir($dir)) {
@@ -70,6 +70,30 @@ class StorageManager implements StorageManagerInterface
         }
 
         return $this->compiledFilesPath . '/' . $filePath;
+    }
+
+    /**
+     * @see http://php.net/realpath
+     * @author Sven Arduwie
+     *
+     * @param string $path
+     * @return string
+     */
+    private function normalizePath(string $path)
+    {
+        $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+        $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+        $absolutes = [];
+
+        foreach ($parts as $part) {
+            if ('.' == $part) continue;
+            if ('..' == $part) {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+        return implode(DIRECTORY_SEPARATOR, $absolutes);
     }
 
     /**

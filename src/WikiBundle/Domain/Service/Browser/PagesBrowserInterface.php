@@ -20,6 +20,24 @@ interface PagesBrowserInterface
     public function getPageContent(string $group, string $url);
 
     /**
+     * Tells if the resource should be streamed without processing
+     *
+     * @param string $repositoryName
+     * @param string $url
+     *
+     * @return bool
+     */
+    public function isAsset(string $repositoryName, string $url): bool;
+
+    /**
+     * @param string $repositoryName
+     * @param string $url
+     *
+     * @return array
+     */
+    public function getAssetStream(string $repositoryName, string $url): array;
+
+    /**
      * Hash page content for comparison
      *
      * @param string $content

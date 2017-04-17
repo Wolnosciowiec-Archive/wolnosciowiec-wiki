@@ -1,0 +1,13 @@
+MetadataBundle\Domain\Entity\BaseMetadata:
+    exclusion_policy: none
+
+    properties:
+        order:
+            type: integer
+
+        alias:
+            type: string
+
+        url:
+            type: string
+

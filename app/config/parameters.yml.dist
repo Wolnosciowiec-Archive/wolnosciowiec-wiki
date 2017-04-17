@@ -19,3 +19,8 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    redis_host: redis_cache
+    redis_port: 6379
+    redis_scheme: tcp
+    redis_socket_path: ~

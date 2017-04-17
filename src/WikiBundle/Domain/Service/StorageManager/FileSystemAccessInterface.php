@@ -39,6 +39,24 @@ interface FileSystemAccessInterface
     public function isFile(string $path): bool;
 
     /**
+     * Returns directory name
+     *
+     * @param string $path
+     * @return string
+     */
+    public function getDirName(string $path): string;
+
+    public function getFileName(string $path): string;
+
+    public function getFileExtension(string $path): string;
+
+    public function getFileBasename(string $path): string;
+
+    public function getLastModTime(string $path): \DateTime;
+
+    public function getFileSize(string $path): int;
+
+    /**
      * Verifies if file is hidden
      *
      * @param string $path
@@ -53,6 +71,14 @@ interface FileSystemAccessInterface
      * @return string
      */
     public function readFile(string $path): string;
+
+    /**
+     * Read file as a stream
+     *
+     * @param string $path
+     * @return resource
+     */
+    public function readFileAsStream(string $path);
 
     /**
      * Write file contents

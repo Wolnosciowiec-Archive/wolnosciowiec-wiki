@@ -3,24 +3,23 @@
 namespace WikiBundle\Domain\Event;
 
 use Symfony\Component\EventDispatcher\Event;
-use WikiBundle\Domain\Context\FileProcessContext;
+use WikiBundle\Domain\Context\AbstractContext;
 use WikiBundle\Domain\Processor\FileProcessorInterface;
 
 abstract class FileProcessEvent extends Event
 {
-    /** @var FileProcessContext $context */
     protected $context;
 
     /** @var FileProcessorInterface $processor */
     protected $processor;
 
-    public function __construct(FileProcessContext $context, FileProcessorInterface $processor)
+    public function __construct(AbstractContext $context, FileProcessorInterface $processor)
     {
         $this->context   = $context;
         $this->processor = $processor;
     }
 
-    public function getContext(): FileProcessContext
+    public function getContext(): AbstractContext
     {
         return $this->context;
     }

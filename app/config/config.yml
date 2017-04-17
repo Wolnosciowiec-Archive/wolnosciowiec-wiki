@@ -76,3 +76,11 @@ jms_serializer:
             WikiBundle:
                 namespace_prefix: "WikiBundle"
                 path: "%kernel.root_dir%/../src/WikiBundle/Resources/config/serializer"
+
+            MetadataCollectionsBundle:
+                namespace_prefix: "MetadataCollectionsBundle"
+                path: "%kernel.root_dir%/../src/MetadataCollectionsBundle/Resources/config/serializer"
+
+            MetadataBundle:
+                namespace_prefix: "MetadataBundle"
+                path: "%kernel.root_dir%/../src/MetadataBundle/Resources/config/serializer"
