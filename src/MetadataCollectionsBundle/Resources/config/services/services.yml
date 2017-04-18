@@ -1,0 +1,21 @@
+imports:
+    - { resource: services_events.yml }
+    - { resource: services_factory.yml }
+
+services:
+    wiki.extension.metadata_collections.repository.collection:
+        class: MetadataCollectionsBundle\Repository\CollectionRepository
+        arguments:
+            definitionFactory: "@wiki.extension.metadata_collections.factory.definition"
+            collectionFactory: "@wiki.extension.metadata_collections.factory.collection"
+            dataProvider:      "@wiki.extension.metadata_collections.provider.configuration"
+            storageManager:    "@wolnosciowiec.wiki.manager.storage"
+
+    wiki.extension.metadata_collections.provider.configuration:
+        class: MetadataCollectionsBundle\Service\CollectionDataProvider
+        arguments:
+            filesystem: "@wolnosciowiec.wiki.manager.filesystem"
+
+    wiki.extension.metadata_collections.routing.generator:
+        class: MetadataCollectionsBundle\Service\RouteGenerator
+
