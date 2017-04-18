@@ -115,8 +115,15 @@ class FileSystemOperator implements FileSystemAccessInterface
      */
     public function isHidden(string $path): bool
     {
-        return substr(basename($path), 0, 1) === '.'
-            || substr(dirname($path), 0, 1) === '.';
+        $parts = explode('/', $path);
+
+        foreach ($parts as $part) {
+            if (strlen($part) > 0 && $part[0] === '.') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

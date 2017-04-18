@@ -73,6 +73,8 @@ class StorageManager implements StorageManagerInterface
     }
 
     /**
+     * Normalizes path, strips out ".."
+     *
      * @see http://php.net/realpath
      * @author Sven Arduwie
      *
@@ -115,6 +117,7 @@ class StorageManager implements StorageManagerInterface
     }
 
     /**
+     * @codeCoverageIgnore
      * @return array
      */
     public function getKnownRepositories(): array
@@ -122,6 +125,10 @@ class StorageManager implements StorageManagerInterface
         return $this->knownRepositories;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @return FileSystemAccessInterface
+     */
     public function getFilesystem(): FileSystemAccessInterface
     {
         return $this->filesystem;
