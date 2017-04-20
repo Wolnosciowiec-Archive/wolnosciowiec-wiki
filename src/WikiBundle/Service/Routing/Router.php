@@ -19,8 +19,6 @@ use WikiBundle\Exception\Router\RuleParserException;
 
 class Router implements RouterInterface
 {
-    const EVENT_POST_COLLECT = 'routerPostCollect';
-
     /** @var array $routes */
     private $routes = [];
 
@@ -57,12 +55,17 @@ class Router implements RouterInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function collectRoutes()
     {
+        // @codeCoverageIgnoreStart
         if ($this->cache->exists('', 'globalRoutes')) {
             $this->routes = json_decode($this->cache->get('', 'globalRoutes'), true);
             return;
         }
+        // @codeCoverageIgnoreEnd
 
         foreach ($this->repositories->getAll() as $repositoryDefinition) {
             $this->addRepositoryRouting($repositoryDefinition);
@@ -70,6 +73,14 @@ class Router implements RouterInterface
 
         $this->triggerPostCollectEvent();
         $this->cache->set('', 'globalRoutes', json_encode($this->routes));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRoutes(): array
+    {
+        return $this->routes;
     }
 
     protected function triggerPostCollectEvent()
@@ -111,7 +122,7 @@ class Router implements RouterInterface
 
                     return new RouterMatch($alias, $matches);
                 }
-            } catch (ContextErrorException $e) {
+            } catch (\Throwable $e) {
                 throw new RuleParserException('Rule "' . $regexp . '" cannot be parsed, reason: ' . $e->getMessage());
             }
         }
